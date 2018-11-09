@@ -1,0 +1,14 @@
+- name: Add a conditional forwarder to AD DC DNS
+  shell: |
+    echo {{ ipa_password | quote }} | kinit admin
+
+    ipa dnsforwardzone-add {{ ad_forest }}  --forwarder={{ ad_forwarder }} --forward-policy=only
+
+  register: result
+  failed_when: "result.rc != 1 and result.rc != 0"
+  changed_when: "result.rc == 0"
+
+- name: Run ipa-adtrust-install
+  become: true
+  command: ipa-adtrust-install -U --netbios-name=IPA -a {{ ipa_password }} --add-sids
+

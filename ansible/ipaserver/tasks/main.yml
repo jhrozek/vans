@@ -1,0 +1,6 @@
+- include: install_packages.yml
+- include: etc_hosts.yml
+- include: haveged.yml
+- include: ipa_server_install.yml
+- include: resolv_conf_self.yml
+- include: ipa_trust_add.yml

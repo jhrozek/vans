@@ -1,0 +1,21 @@
+- name: 'Create new AD forest {{ ad_forest }}'
+  win_shell: |
+    Import-Module ADDSDeployment
+    Install-ADDSForest                                                        \
+      -DomainName "{{ ad_forest }}"                                           \
+      -CreateDnsDelegation:$false                                             \
+      -DomainNetbiosName "{{ ad_netbios }}"                                   \
+      -ForestMode "{{ ad_forest_mode }}"                                      \
+      -DomainMode "{{ ad_domain_mode }}"                                      \
+      -Force:$true                                                            \
+      -InstallDns:$true                                                       \
+      -NoRebootOnCompletion:$true                                             \
+      -SafeModeAdministratorPassword                                          \
+        (ConvertTo-SecureString '{{ ad_admin_password }}' -AsPlainText -Force)
+  register: installation
+  args:
+    creates: 'C:\Windows\NTDS'
+
+- name: Reboot machine
+  win_reboot:
+  when: installation.changed

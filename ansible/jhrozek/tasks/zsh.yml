@@ -1,0 +1,19 @@
+- name: install zsh
+  become: yes
+  tags:
+    - packages
+  package:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - zsh
+
+- name: Create .zshrc from template
+  template:
+    src: zshrc.template
+    dest: "{{ homedir }}/.zshrc"
+
+- name: Clone oh-my-zsh
+  git:
+    repo: https://github.com/robbyrussell/oh-my-zsh.git
+    dest: "{{ homedir }}/.oh-my-zsh"

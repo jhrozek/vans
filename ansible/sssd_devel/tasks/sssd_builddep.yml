@@ -1,0 +1,14 @@
+- stat: path=/sssd/contrib/sssd.spec.in
+  register: st
+
+- name: Install sssd build dependencies
+  command: sudo yum-builddep -y sssd
+  when: st.stat.exists and ansible_distribution == "CentOS"
+
+- name: Make sure dnf plugins are installed
+  command: sudo dnf -y upgrade python3-dnf-plugins-core
+  when: st.stat.exists and ansible_distribution == "Fedora"
+
+- name: Install sssd build dependencies
+  command: sudo dnf builddep -y sssd
+  when: st.stat.exists and ansible_distribution == "Fedora"

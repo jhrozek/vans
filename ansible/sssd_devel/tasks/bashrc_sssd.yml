@@ -1,0 +1,10 @@
+- name: Place development aliases into homedir
+  template:
+    src: bashrc_sssd.template
+    dest: "{{ homedir }}/.bashrc_sssd"
+
+- name: Source aliases from zshrc
+  lineinfile:
+     path: "{{ homedir }}/.zshrc"
+     state: present
+     line: "source {{ homedir }}/.bashrc_sssd"

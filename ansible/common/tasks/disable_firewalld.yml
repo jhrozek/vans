@@ -1,0 +1,10 @@
+- service: name=firewalld state=stopped
+  when: ansible_distribution == "Fedora" or (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7")
+- service: name=firewalld enabled=no
+  when: ansible_distribution == "Fedora" or (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7")
+- service: name=iptables state=stopped
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or
+        (ansible_distribution == "CentOS" and ansible_distribution_major_version == "5")
+- service: name=iptables enabled=no
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or
+        (ansible_distribution == "CentOS" and ansible_distribution_major_version == "5")

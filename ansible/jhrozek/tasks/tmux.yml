@@ -1,0 +1,19 @@
+- name: install tmux
+  become: yes
+  tags:
+    - packages
+  package:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - tmux
+
+- name: Clone TPM
+  git:
+    repo: 'https://github.com/tmux-plugins/tpm'
+    dest: "{{ homedir }}/.tmux/plugins/tpm"
+
+- name: Template .tmux.conf
+  template:
+    src: tmux.conf.template
+    dest: "{{ homedir }}/.tmux.conf"

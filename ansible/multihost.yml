@@ -1,0 +1,9 @@
+---
+- name: install and provision SSSD multihost tessts
+  hosts: testmachine_sssd
+  become: True
+
+  roles:
+      - { role: common, tags: ['common'] }
+      - { role: jhrozek, tags: ['jhrozek'] }
+      - { role: sssd_devel, tags: ['sssd_devel'] }

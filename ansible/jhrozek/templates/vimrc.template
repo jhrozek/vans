@@ -1,0 +1,441 @@
+" VIM settings file used by Jakub Hrozek <jakub.hrozek@posteo.se>
+"
+" heavily inspired by one used by Andreas Schneider <asn@cryptomilk.org>
+"
+
+" =========================
+"   General
+" =========================
+"
+" Extra terminal things
+if (($TERM == "rxvt-unicode") || ($TERM =~ "xterm") || ($TERM =~ "screen")) && (&termencoding == "")
+    set termencoding=utf-8
+endif
+
+if has('vim_starting')
+    " vi improved mode
+    set nocompatible
+    " set the runtime path to include Vundle and initialize
+    set rtp+=~/.vim/bundle/Vundle.vim/
+    call vundle#rc()
+endif
+
+if !has('gui_running')
+    set mouse=
+endif
+
+" =========================
+"   Plugins, managed by vundle
+" =========================
+"
+" Vundle config
+filetype off
+
+" let Vundle manage Vundle, required
+Plugin 'gmarik/vundle'
+
+" -- Git plugins
+" Git integration
+Plugin 'tpope/vim-fugitive'
+" Show what lines changed, modified, etc
+Plugin 'airblade/vim-gitgutter'
+" GIT modeline
+Plugin 'git://git.cryptomilk.org/projects/vim-gitmodeline.git/'
+
+" -- Code completion and tags
+" YouCompleteMe
+Plugin 'Valloric/YouCompleteMe'
+" Update ctags on save
+Plugin 'craigemery/vim-autotag'
+" Maps for cscope
+Plugin 'simplyzhao/cscope_maps.vim'
+" Fancy tree on the left
+Plugin 'majutsushi/tagbar'
+
+" -- Doxygen helpers
+Plugin 'DoxygenToolkit.vim'
+
+" -- Look'n'feel plugins
+Plugin 'bling/vim-airline'
+Plugin 'roman/golden-ratio'
+Bundle 'stephenmckinney/vim-solarized-powerline'
+
+
+" -- Colors
+Plugin 'tomasr/molokai'
+Plugin 'altercation/vim-colors-solarized.git'
+
+" -- Filysystem browser
+Plugin 'scrooloose/nerdtree'
+
+" -- Programming
+Plugin 'markwu/manpageview'
+Plugin 'fatih/vim-go'
+
+" Required for Vundle as well. This option must come after all the plugins!
+filetype on
+filetype plugin indent on
+" use plugins in $HOME/.vim/ftplugin
+filetype plugin on
+
+" =========================
+"   Files/Backups
+" =========================
+"
+" Enable a nice big viminfo file
+set   viminfo='1000,f1,:1000,/1000
+" Automatically save modifications to files when changing tab/buffer/etc
+set   autowrite
+" Ask for confirmation before executing :q
+set confirm
+
+" =========================
+"   Colors
+" =========================
+"
+" Try to load a nice colourscheme
+fun! LoadColourScheme(schemes)
+    let l:schemes = a:schemes . ":"
+    while l:schemes != ""
+        let l:scheme = strpart(l:schemes, 0, stridx(l:schemes, ":"))
+        let l:schemes = strpart(l:schemes, stridx(l:schemes, ":") + 1)
+        try
+            exec "colorscheme" l:scheme
+            break
+        catch
+        endtry
+    endwhile
+endfun
+
+if has('gui')
+   call LoadColourScheme("desert")
+else
+   if &t_Co == 88 || &t_Co == 256
+       " molokai
+       let g:rehash256 = 1
+
+       "call LoadColourScheme("molokai:inkpot:Tomorrow-Night-Eighties:molokai:jellybean")
+       call LoadColourScheme("desert")
+   else
+"       call LoadColourScheme("desert256:darkblack:desert:darkblue:elflord")
+"       Colorize some default highlight groups
+"       see ":help highlight-default"
+"
+"            Comments: Colorizing the "comments" (see ":help comments").
+"            cyan on white does not look good on a black background..
+          hi comment                           ctermfg=cyan   ctermbg=black
+"         hi comment                           ctermfg=cyan   ctermbg=7
+"
+"       hi Cursor
+"       hi Directory
+"       hi ErrorMsg
+"       hi FoldColumn
+"       hi Folded
+"       hi IncSearch
+"
+"            LineNr:  Colorize the line numbers (displayed with
+"            "set number").
+"            Turn off default underlining of line numbers:
+          hi LineNr term=NONE cterm=NONE ctermfg=white ctermbg=black
+"
+"       hi ModeMsg
+"       hi MoreMsg
+"
+"         coloring "nontext", ie TABs, trailing spaces,  end-of-lines,
+"         and the "tilde lines" representing lines after end-of-buffer.
+          hi NonText term=NONE cterm=NONE ctermfg=blue   ctermbg=black
+"
+"            Normal text:    Use white on black.
+"         hi normal ctermfg=white ctermbg=black guifg=white guibg=black
+          hi normal ctermfg=grey  ctermbg=black guifg=grey guibg=black
+"       Oops - this overrides the colors for the status line - DANG!
+"
+"       hi Question
+"
+"            Search: Coloring "search matches".  Use white on red.
+          hi search  ctermfg=white ctermbg=red     guifg=white guibg=red
+"
+"         hi SpecialKey
+"
+"            statusline: coloring the status line -> is not possible :-(
+"         hi StatusLine  term=NONE cterm=NONE ctermfg=yellow ctermbg=red
+"
+"         hi Title
+"         hi VertSplit
+"         hi Visual
+"         hi VisualNOS
+"         hi WarningMsg
+"         hi WildMenu
+"
+"         Other Groups:
+"
+"            Normal:  Coloring the text with a default color.
+          hi normal       term=NONE
+    endif
+endif
+set background=dark
+colorscheme desert
+
+" =========================
+"   Vim UI
+" =========================
+"
+"       backspace:  '2' allows backspacing" over
+"       indentation, end-of-line, and start-of-line.
+"       see also "help bs".
+set   backspace=2
+"       ruler:       show cursor position?
+set   ruler
+"       shortmess:   Kind of messages to show.   Abbreviate them
+"       all! 
+set   shortmess=at
+"       showcmd:     Show current uncompleted command?
+"       Absolutely!
+set   showcmd
+"       showfulltag: (sft) auto completion (great for programming)
+set   showfulltag
+"       showmode:    Show the current mode?
+set   showmode
+"       splitbelow:  Create new window below current one.
+set   splitbelow
+" Try to show at least three lines and two columns of context when
+" scrolling
+set   scrolloff=3
+set   sidescrolloff=2
+" Use tab for wildcard expansion
+set   wildchar=<Tab>
+" Show the expansion in the menu
+set   wildmenu
+set   wildmode=longest:full,full
+set   wildignore=*.o,*~
+" errorbells: damn this beep!  ;-)
+set   noerrorbells
+
+""" Otherwise goldenview resizes hint windows
+set completeopt=menuone
+
+
+""       modeline:  Allow the last line to be a modeline - useful
+""       when the last line in sig gives the preferred textwidth
+""       for replies.
+"if (v:version == 603 && has("patch045")) || (v:version > 603)
+"  set   modeline
+"  set   modelines=1
+"else
+"  set   nomodeline
+"endif
+"
+"       foldenable: When off, all folds are open.
+set   nofoldenable
+
+set laststatus=2
+set statusline=%F%m%r%h%w\ [TYPE=%Y]\ [ASCII=\%03.3b]\ [HEX=\%02.2B]\ [POS=%04l,%04v][%p%%]\ [LEN=%L]
+
+" If possible, try to use a narrow number column.
+if v:version >= 700
+    try
+        setlocal numberwidth=3
+    catch
+    endtry
+endif
+
+" If we're in a wide window, enable line numbers.
+fun! <SID>WindowWidth()
+    if winwidth(0) > 82
+        setlocal number
+    else
+        setlocal nonumber
+    endif
+endfun
+
+" Show tabs and trailing whitespace visually
+if (&termencoding == "utf-8") || has("gui_running")
+    if v:version >= 700
+        set list listchars=tab:»·,trail:·,extends:…,nbsp:‗
+    else
+        set list listchars=tab:»·,trail:·,extends:…
+    endif
+    else
+    if v:version >= 700
+        set list listchars=tab:>-,trail:.,extends:>,nbsp:_
+    else
+        set list listchars=tab:>-,trail:.,extends:>
+    endif
+endif
+
+set fillchars=fold:-
+
+" =========================
+"   Text Formatting/Layout
+" =========================
+" autoindent: auto indent, nice for coding
+set   autoindent
+" smartindent: Do smart autoindenting when starting a new line.
+" Works for C-like programs, but can also be used for other
+set   smartindent
+" Number if spaces instead of a tab. This should be changed to use git
+" modeline instead.
+set   shiftwidth=4
+set   softtabstop=4
+" When intendig with '<' or '>', always indent by shiftwidth
+set   shiftround
+" Fuck tabs, use spaces
+set   expandtab
+" Don't wrap long lines
+set   nowrap
+" Highligh long lines
+highlight OverLength ctermbg=red ctermfg=white guibg=#592929
+match OverLength /\%81v.*/
+let c_no_tab_space_error=1
+let c_space_errors=1
+
+
+" =========================
+" Code completion and tags
+" =========================
+"Filetype-specific code completion
+autocmd FileType python set omnifunc=pythoncomplete#Complete
+autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
+autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
+autocmd FileType c set omnifunc=ccomplete#CompleteCpp
+
+" Tags for libraries I use
+set tags+="{{ homedir }}/devel/sssd/src/tags"
+
+" cscope for libraries I use
+"silent cs add /home/jakub/cscope.out
+set cscopetag
+set nocscopeverbose 
+
+function CscopeRetag()
+    if filereadable("cscope.out")
+        !cscope -b -R
+        cs reset
+
+        if exists(":TlistUpdate")
+            TlistUpdate
+        endif
+    endif
+endfunction
+
+" Refresh tags when a buffer is saved
+autocmd BufWritePost,FileWritePost * silent call CscopeRetag()
+" Display line numbers if the window is wide enough
+autocmd BufEnter * :call <SID>WindowWidth()
+" Always do a full syntax refresh
+autocmd BufEnter * syntax sync fromstart
+
+
+" =========================
+" Shortcuts and command abbreviations
+" =========================
+:command WQ wq
+:command Wq wq
+:command W w
+:command Q q
+:command SP setlocal spell spelllang=en_us
+
+" Ctrl+\ then t to open a tag in a new tab
+map <C-\>t :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
+" Ctrl+\ then v to open a tag in a vertical split
+map <C-\>v :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+" Display tags in a side pane
+nnoremap <F5> :TagbarToggle<CR>
+" Display filesystem in a side pane
+nnoremap <F6> :NERDTreeToggle<CR>
+" Toggle the paste mode
+set pastetoggle=<F12>
+
+" RPM changelog helper
+imap <C-C>c <ESC>:,!date "+\%a \%b \%e \%Y"<CR>i* <Esc>A Jakub Hrozek <jhrozek@redhat.com><CR>-
+
+" git gutter
+nmap <silent> <C-g> :GitGutterNextHunk<CR>
+nmap <silent> <C-h> :GitGutterPrevHunk<CR>
+
+" =========================
+" Plugin settings
+" =========================
+" git settings
+let g:git_commit_window_height = 15
+
+" Airline settings
+let g:airline#extensions#tabline#enabled = 1
+
+" YouCompleteMe settings
+"let ycm_auto_trigger = 0
+let g:ycm_collect_identifiers_from_tags_files = 1
+let g:ycm_confirm_extra_conf = 0
+let g:ycm_enable_diagnostic_signs = 0 " Else we have issues with gitgutter
+let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
+let g:ycm_add_preview_to_completeopt = 0
+let g:ycm_server_python_interpreter = '/usr/bin/python3'
+
+" doxygen vim config
+" http://www.vim.org/scripts/script.php?script_id=987
+let g:DoxygenToolkit_authorName="Jakub Hrozek"
+let g:DoxygenToolkit_licenseTag="GPL"
+let g:DoxygenToolkit_undocTag="DOXIGEN_SKIP_BLOCK"
+let g:DoxygenToolkit_briefTag_funcName = "no"
+let g:DoxygenToolkit_commentType = "C"
+let g:DoxygenToolkit_briefTag_pre = " @brief "
+let g:DoxygenToolkit_briefTag_post = ""
+let g:DoxygenToolkit_paramTag_pre = " @param[in]  "
+let g:DoxygenToolkit_paramTag_post = " "
+let g:DoxygenToolkit_returnTag = " @return "
+let g:DoxygenToolkit_fileTag = " @file "
+let g:DoxygenToolkit_authorTag = " @author "
+let g:DoxygenToolkit_dateTag = " @date "
+let g:DoxygenToolkit_blockTag = " @name "
+let g:DoxygenToolkit_classTag = " @class "
+let g:DoxygenToolkit_startCommentTag = "/**"
+let g:DoxygenToolkit_startCommentBlock = "/*"
+let g:DoxygenToolkit_interCommentTag = "*"
+let g:DoxygenToolkit_endCommentTag = "*/"
+let g:DoxygenToolkit_endCommentBlock = " */"
+
+" manpageview
+let g:manpageview_winopen = "hsplit="
+let g:manpageview_multimanpage = 0
+
+let g:golden_ratio_exclude_nonmodifiable = 1
+
+" =========================
+"   Git commit helpers
+" =========================
+function! CommitMessages()
+    nmap R iReviewed-by: Jakub Hrozek <jhrozek@redhat.com><CR><ESC>
+    nmap S iSigned-off-by: Jakub Hrozek <jakub.hrozek@posteo.se><CR><ESC>
+    iab #R Reviewed-by:
+    iab JH Jakub<SPACE>Hrozek<SPACE><jhrozek@redhat.com>
+    iab SJH Jakub<SPACE>Hrozek<SPACE><jakub.hrozek@posteo.se>
+    iab LS Lukáš<SPACE>Slebodník<SPACE><lslebodn@redhat.com>
+    iab MZ Michal<SPACE>Židek<SPACE><mzidek@redhat.com>
+    iab PB Pavel<SPACE>Březina<SPACE><pbrezina@redhat.com>
+    iab SB Sumit<SPACE>Bose<SPACE><sbose@redhat.com>
+    iab NK Nikolai<SPACE>Kondrashov<SPACE><Nikolai.Kondrashov@redhat.com>
+    iab SG Stephen<SPACE>Gallagher<SPACE><sgallagh@redhat.com>
+    iab SS Simo<SPACE>Sorce<SPACE><simo@redhat.com>
+    iab SW Stef<SPACE>Walter<SPACE><stefw@redhat.com>
+    iab PC Petr<SPACE>Cech<SPACE><pcech@redhat.com>
+    iab AB Alexander<SPACE>Bokovoy<SPACE><abokovoy@redhat.com>
+    iab FF Fabiano<SPACE>Fidêncio<SPACE><fidencio@redhat.com>
+endf
+autocmd BufWinEnter COMMIT_EDITMSG,*.diff,*.patch,*.patches.txt call CommitMessages()
+
+function! PatchworkMacros()
+    " k -> acK in order to avoid conflicting with tmux
+    nmap <C-k> ggiX-Patchwork-State: Accepted<CR><ESC>
+    " n -> nack
+    nmap <C-n> ggiX-Patchwork-State: Changes Requested<CR><ESC>
+    " r -> review
+    ":w
+    "nmap <C-r> ggiX-Patchwork-State: Under Review<CR><ESC>
+    " p -> pushed
+    nmap <C-p> ggiX-Patchwork-State: Pushed<CR><ESC>
+    " t -> take
+    nmap <C-t> ggiX-Patchwork-Delegate: jhrozek@redhat.com<CR><ESC>
+endf
+autocmd BufWinEnter /tmp/mutt-* call PatchworkMacros()

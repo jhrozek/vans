@@ -1,0 +1,7 @@
+- include: useradd.yml
+- include: sudo.yml
+- include: git.yml
+- include: zsh.yml
+- include: tmux.yml
+- include: vim.yml
+- template: src=authorized_keys dest=/home/jhrozek/.ssh/authorized_keys

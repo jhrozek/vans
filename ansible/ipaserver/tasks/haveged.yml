@@ -1,0 +1,3 @@
+- dnf: pkg=haveged state=installed
+- service: name=haveged state=started
+- service: name=haveged enabled=yes

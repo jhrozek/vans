@@ -1,0 +1,17 @@
+- name: install git and hub
+  become: yes
+  tags:
+    - packages
+  package:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - git
+    - hub
+    - tig
+
+- name: Template .gitconfig
+  template:
+    src: gitconfig.template
+    dest: "{{ homedir }}/.gitconfig"
+

@@ -1,0 +1,81 @@
+[user]
+    name = Jakub Hrozek
+    email = jakub.hrozek@posteo.se
+[color]
+    ui = auto
+    diff = auto
+    status = auto
+    branch = auto
+[color "diff"]
+    new = green bold
+    old = red bold
+    meta = cyan bold
+    frag = white bold
+    commit = white bold
+[color "status"]
+    added = red bold
+    changed = cyan bold
+    untracked = yellow bold
+
+[core]
+    include = ~jhrozek/.githubconfig
+    editor = vim
+
+[apply]
+    whitespace = strip
+
+[credential]
+	helper = cache
+
+[alias]
+        a = apply --index
+        ac = "!f() { curl $@ | git a; }; f"
+        ai = add -e
+        ai = add -i
+        ap = add -p
+        di = diff -p --stat
+        dc = diff -p --stat --cached
+        dh = diff HEAD -p --stat
+        ds = diff --stat
+        cds = diff --cached --stat
+        hds = diff HEAD --stat
+        ci = commit
+        co = checkout
+        br = branch
+        ru = remote update
+        st = !git --no-pager status
+        stat = status
+        shs = show -p --stat
+        sh = show -p --stat --pretty=fuller
+        l = log
+        lo = log --pretty=oneline
+        lho = !git --no-pager log --oneline origin/master..HEAD
+        lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --
+        rlog = log --reverse -p --stat
+        ami3 = am -i -3
+        am3 = am -3
+        pr = pull --rebase
+        r = show -p --stat -U25
+        rba = rebase --abort
+        rbc = rebase --continue
+        rbi = rebase -i
+        wc = whatchanged -p --stat
+        wcy = whatchanged -p --stat --since='yesterday'
+        wcw = whatchanged -p --stat --since='1 weeks ago'
+        wcf = whatchanged -p --stat --pretty=fuller
+        wcyf = whatchanged -p --stat --pretty=fuller --since='yesterday'
+        wcwf = whatchanged -p --stat --pretty=fuller --since='1 weeks ago'
+        wcs = whatchanged --stat
+        wcys = whatchanged --stat --since='yesterday'
+        wcws = whatchanged --stat --since='1 weeks ago'
+        chp = cherry-pick
+        chpx = cherry-pick -x
+        fp = format-patch -M -C --patience --full-index
+	branch-diff = log --oneline --cherry-pick --left-right
+        fpstd = format-patch --stdout
+        sb = show-branch
+        w = status -b -s -uno
+        recompile = rebase -i -x "cd /dev/shm/sssd && make -j4 && make -j4 tests && make check" origin/master
+        wdiff = diff --word-diff=plain
+[diff]
+	tool = meld

@@ -1,0 +1,13 @@
+-  dnf: pkg={{item}} state=installed
+   with_items:
+     - freeipa-server
+     - freeipa-server-dns
+     - bind-dyndb-ldap
+     - freeipa-server-trust-ad
+   when: ansible_distribution == "Fedora"
+
+-  dnf: pkg={{item}} state=installed
+   with_items:
+     - ipa-server
+     - bind-dyndb-ldap
+   when: ansible_distribution == "CentOS"

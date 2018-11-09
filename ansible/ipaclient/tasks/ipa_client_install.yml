@@ -1,0 +1,10 @@
+- command: ipa-client-install -U --domain {{ ipa_domain }} -w {{ ipa_password }} -p admin@{{ ipa_domain | upper | quote }} --force-join
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version != "5") or
+        (ansible_distribution == "Fedora")
+  args:
+      creates: /etc/krb5.keytab
+
+- command: ipa-client-install -U --domain {{ ipa_domain }} -w {{ ipa_password }} -p admin@{{ ipa_domain | upper | quote }}
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "5"
+  args:
+      creates: /etc/krb5.keytab

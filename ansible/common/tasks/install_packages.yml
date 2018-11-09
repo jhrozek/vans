@@ -1,0 +1,4 @@
+- name: install Fedora packages
+  dnf: pkg={{item}} state=installed
+  with_items:
+    - firewalld

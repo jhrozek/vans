@@ -1,0 +1,39 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+SERVER_HOSTNAME="testmachine.sssd.test"
+SERVER_IP_ADDRESS="192.168.122.120"
+
+SSSD_SRC="/home/jhrozek/devel/sssd"
+
+Vagrant.configure("2") do |config|
+  config.vm.define "testmachine" do |testmachine|
+      testmachine.vm.box = "fedora/28-cloud-base"
+      testmachine.vm.network "private_network", ip: "#{SERVER_IP_ADDRESS}"
+      testmachine.vm.hostname = "#{SERVER_HOSTNAME}"
+
+      testmachine.vm.synced_folder "#{SSSD_SRC}", "/sssd", type: "sshfs", sshfs_opts_append: "-o cache=no"
+
+      testmachine.vm.provider :libvirt do |domain|
+          domain.cpus = 2
+          domain.storage_pool_name = 'jhrozek'
+      end
+  end
+
+  config.vm.provision "ansible" do |ansible|
+      ansible.playbook = "../ansible/multihost.yml"
+
+      ansible.host_vars = {
+                  "testmachine" => {
+                      "ansible_python_interpreter" => "/usr/bin/python3"
+                  },
+      }
+
+      ansible.groups = {
+          "testmachine_sssd" => ["testmachine"],
+      }
+
+      ansible.extra_vars = {
+      }
+  end
+end

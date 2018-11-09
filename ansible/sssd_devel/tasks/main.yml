@@ -1,0 +1,6 @@
+- include: install_packages.yml
+- include: sssd_builddep.yml
+- include: debuginfo.yml
+- include: sssd_useradd.yml
+- include: sc_services.yml
+- include: bashrc_sssd.yml

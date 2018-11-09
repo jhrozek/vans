@@ -1,0 +1,7 @@
+- name: install dnf-utils
+  dnf: pkg=dnf-utils state=installed
+
+- name: install debuginfo for samba libs
+  command: debuginfo-install -y libldb libtevent
+  when: ansible_distribution == "Fedora"
+

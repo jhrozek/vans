@@ -1,0 +1,19 @@
+- name: install and configure git
+  become: yes
+  tags:
+    - packages
+  package:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - vim-enhanced
+
+- name: Clone Vundle
+  git:
+    repo: 'https://github.com/VundleVim/Vundle.vim.git'
+    dest: "{{ homedir }}/.vim/bundle/Vundle.vim"
+
+- name: Template .vimrc
+  template:
+    src: vimrc.template
+    dest: "{{ homedir }}/.vimrc"
