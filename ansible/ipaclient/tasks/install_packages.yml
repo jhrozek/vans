@@ -1,9 +1,7 @@
--  dnf: pkg={{item}} state=installed
-   with_items:
-     - freeipa-client
-   when: ansible_distribution == "Fedora"
+- name: Install freeipa-client
+  dnf: pkg=freeipa-client state=installed
+  when: ansible_distribution == "Fedora"
 
--  dnf: pkg={{item}} state=installed
-   with_items:
-     - ipa-client
-   when: ansible_distribution == "CentOS"
+- name: Install ipa-client
+  dnf: pkg=ipa-client state=installed
+  when: ansible_distribution == "CentOS"

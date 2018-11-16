@@ -1,1 +1,2 @@
-- hostname: name={{ client_fqdn }}
+- name: Set hostname to client FQDN
+  hostname: name={{ client_fqdn }}
