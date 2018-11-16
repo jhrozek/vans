@@ -1,0 +1,17 @@
+- name: Create the keycloak directory
+  file:
+      state: directory
+      path: /opt/keycloak
+
+- name: Download the keycloak archive
+  get_url:
+    url: "https://downloads.jboss.org/keycloak/{{ keycloak_version }}/keycloak-4.5.0.Final.tar.gz"
+    dest: "/opt/keycloak/keycloak-{{ keycloak_version }}.tar.gz"
+  register: new_archive
+
+- name: Unpack keycloak
+  unarchive:
+    src: "/opt/keycloak/keycloak-{{ keycloak_version }}.tar.gz"
+    dest: /opt/keycloak
+    copy: no
+  when: new_archive is changed

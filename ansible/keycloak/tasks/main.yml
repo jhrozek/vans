@@ -1,0 +1,4 @@
+- include: install_java.yml
+- include: download_keycloak.yml
+- include: create_config.yml
+

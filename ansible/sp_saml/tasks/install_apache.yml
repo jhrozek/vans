@@ -1,0 +1,5 @@
+- name: install apache httpd
+  dnf: pkg=httpd state=installed
+
+- name: install mod_auth_mellon
+  dnf: pkg=mod_auth_mellon state=installed

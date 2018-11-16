@@ -1,0 +1,3 @@
+- name: install headless java
+  dnf: pkg=java-1.8.0-openjdk-headless state=installed
+

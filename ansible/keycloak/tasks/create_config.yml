@@ -1,0 +1,31 @@
+- name: Create the keycloak config directory
+  file:
+      state: directory
+      path: /etc/keycloak
+
+- name: Create keycloak config file
+  template:
+    src: keycloak.conf
+    dest: /etc/keycloak/keycloak.conf
+
+- name: Create launch.sh
+  template:
+    src: launch.sh
+    dest: /opt/keycloak/keycloak-4.5.0.Final/bin/launch.sh
+
+- name: Make launch.sh executable
+  file:
+    path: /opt/keycloak/keycloak-{{ keycloak_version }}/bin/launch.sh
+    state: file
+    mode: 0755
+
+- name: Create keycloak service unit file
+  template:
+    src: keycloak.service
+    dest: /etc/systemd/system/keycloak.service
+  register: keycloak_service
+
+- name: reload systemd if keycloak service changed
+  systemd:
+    daemon_reload: yes
+  when: keycloak_service is changed

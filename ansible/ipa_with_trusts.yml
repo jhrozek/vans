@@ -2,7 +2,6 @@
 - name: install and provision IPA trust server
   hosts: ipa_trust_server
   become: True
-
   roles:
       - { role: common, tags: ['common'] }
       - { role: jhrozek, tags: ['jhrozek'] }
@@ -12,7 +11,6 @@
 - name: install and provision IPA trust client
   hosts: ipa_trust_client
   become: True
-
   roles:
       - { role: common, tags: ['common'] }
       - { role: jhrozek, tags: ['jhrozek'] }
@@ -21,7 +19,24 @@
 
 - name: install and provision AD forest root
   hosts: ad_dc
-
   roles:
       - { role: ad_common, tags: ['ad_common'] }
       - { role: ad_forest, tags: ['ad_forest'] }
+
+- name: install and provision Keycloak IDP
+  hosts: ipa_trust_keycloak
+  become: True
+  roles:
+      - { role: common, tags: ['common'] }
+      - { role: jhrozek, tags: ['jhrozek'] }
+      - { role: ipaclient, tags: ['ipaclient'] }
+      - { role: keycloak, tags: ['keycloak'] }
+
+- name: install and provision Apache as a SP
+  hosts: ipa_trust_saml
+  become: True
+  roles:
+      - { role: common, tags: ['common'] }
+      - { role: jhrozek, tags: ['jhrozek'] }
+      - { role: ipaclient, tags: ['ipaclient'] }
+      - { role: sp_saml, tags: ['sp_saml'] }
