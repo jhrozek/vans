@@ -1,3 +1,4 @@
 - include: install_packages.yml
 - include: etc_hosts.yml
 - include: disable_firewalld.yml
+- include: set_root_password.yml
