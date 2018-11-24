@@ -7,6 +7,12 @@ SERVER_IP_ADDRESS="192.168.122.100"
 CLIENT_HOSTNAME="client.ipa.test"
 CLIENT_IP_ADDRESS="192.168.122.110"
 
+ADCLIENT_HOSTNAME="adclient.win.trust.test"
+ADCLIENT_IP_ADDRESS="192.168.122.111"
+
+ADCLIENT_CENTOS7_HOSTNAME="centos7.win.trust.test"
+ADCLIENT_CENTOS7_IP_ADDRESS="192.168.122.112"
+
 KEYCLOAK_HOSTNAME="keycloak.ipa.test"
 KEYCLOAK_IP_ADDRESS="192.168.122.120"
 
@@ -15,14 +21,21 @@ SP_SAML_IP_ADDRESS="192.168.122.130"
 
 FREEIPA_SRC="/home/jhrozek/devel/freeipa"
 SSSD_SRC="/home/jhrozek/devel/sssd"
+MOD_AUTH_OIDC_SRC="/home/jhrozek/devel/mod_auth_openidc"
 MOD_AUTH_MELLON_SRC="/home/jhrozek/devel/mod_auth_mellon"
 KHCI_SRC="/home/jhrozek/devel/keycloak-httpd-client-install"
 
 AD_FOREST="win.trust.test"
+AD_REALM="WIN.TRUST.TEST"
 AD_NETBIOS="WIN"
 AD_DC_HOSTNAME="dc"
 AD_DC_FQDN="dc.win.trust.test"
 AD_IP_ADDRESS="192.168.122.166"
+
+AD_CHILD_DOMAIN="child.win.trust.test"
+AD_CHILD_REALM="CHILD.WIN.TRUST.TEST"
+AD_CHILD_DC_FQDN="dc.child.win.trust.test"
+AD_CHILD_IP_ADDRESS="192.168.122.176"
 
 Vagrant.configure(2) do |config|
 
@@ -53,6 +66,34 @@ Vagrant.configure(2) do |config|
       end
   end
 
+  config.vm.define "adclient" do |adclient|
+      adclient.vm.box = "fedora/28-cloud-base"
+      adclient.vm.network "private_network", ip: "#{ADCLIENT_IP_ADDRESS}"
+      adclient.vm.hostname = "#{ADCLIENT_HOSTNAME}"
+
+      adclient.vm.synced_folder "#{SSSD_SRC}", "/sssd", type: "sshfs", sshfs_opts_append: "-o cache=no"
+
+      adclient.vm.provider :libvirt do |domain|
+          domain.memory = 1024
+          domain.cpus = 2
+          domain.storage_pool_name = 'jhrozek'
+      end
+  end
+
+  config.vm.define "adclient_centos7" do |adclient|
+      adclient.vm.box = "centos/7"
+      adclient.vm.network "private_network", ip: "#{ADCLIENT_CENTOS7_IP_ADDRESS}"
+      adclient.vm.hostname = "#{ADCLIENT_CENTOS7_HOSTNAME}"
+
+      adclient.vm.synced_folder "#{SSSD_SRC}", "/sssd", type: "sshfs", sshfs_opts_append: "-o cache=no"
+      adclient.vm.synced_folder "#{MOD_AUTH_OIDC_SRC}", "/mod_auth_oidc", type: "sshfs", sshfs_opts_append: "-o cache=no"
+
+      adclient.vm.provider :libvirt do |domain|
+          domain.memory = 1024
+          domain.storage_pool_name = 'jhrozek'
+      end
+  end
+
   config.vm.define "ad_dc" do |ad_dc|
       ad_dc.vm.box = "peru/windows-server-2016-standard-x64-eval"
       ad_dc.vm.network "private_network", ip: "#{AD_IP_ADDRESS}"
@@ -62,6 +103,20 @@ Vagrant.configure(2) do |config|
       ad_dc.winrm.username = ".\\Administrator"
 
       ad_dc.vm.provider :libvirt do |domain|
+          domain.memory = 2048
+          domain.storage_pool_name = 'jhrozek'
+      end
+  end
+
+  config.vm.define "ad_child_dc" do |ad_child_dc|
+      ad_child_dc.vm.box = "peru/windows-server-2016-standard-x64-eval"
+      ad_child_dc.vm.network "private_network", ip: "#{AD_CHILD_IP_ADDRESS}"
+      ad_child_dc.vm.hostname = "#{AD_CHILD_DC_FQDN}"
+      ad_child_dc.vm.guest = :windows
+      ad_child_dc.vm.communicator = "winrm"
+      ad_child_dc.winrm.username = ".\\Administrator"
+
+      ad_child_dc.vm.provider :libvirt do |domain|
           domain.memory = 2048
           domain.storage_pool_name = 'jhrozek'
       end
@@ -101,6 +156,9 @@ Vagrant.configure(2) do |config|
                   "client" => {
                       "ansible_python_interpreter" => "/usr/bin/python3",
                   },
+                  "adclient" => {
+                      "ansible_python_interpreter" => "/usr/bin/python3",
+                  },
                   "keycloak" => {
                       "ansible_python_interpreter" => "/usr/bin/python3",
                   },
@@ -108,6 +166,11 @@ Vagrant.configure(2) do |config|
                       "ansible_python_interpreter" => "/usr/bin/python3",
                   },
                   "ad_dc" => {
+                      "ansible_winrm_server_cert_validation" => "ignore",
+                      "ansible_user" => "Administrator",
+                      "ansible_password" => "vagrant",
+                  },
+                  "ad_child_dc" => {
                       "ansible_winrm_server_cert_validation" => "ignore",
                       "ansible_user" => "Administrator",
                       "ansible_password" => "vagrant",
@@ -120,6 +183,8 @@ Vagrant.configure(2) do |config|
           "ipa_trust_keycloak" => ["keycloak"],
           "ipa_trust_saml" => ["sp_saml"],
           "ad_dc" => ["ad_dc"],
+          "ad_child_dc" => ["ad_child_dc"],
+          "ad_client" => ["adclient", "adclient_centos7"],
       }
 
       ansible.extra_vars = {
@@ -128,16 +193,17 @@ Vagrant.configure(2) do |config|
             server_fqdn: "#{SERVER_HOSTNAME}",
             server_ip_address: "#{SERVER_IP_ADDRESS}",
             ad_forest: "#{AD_FOREST}",
+            ad_realm: "#{AD_REALM}",
             ad_netbios: "#{AD_NETBIOS}",
             ad_forwarder: "#{AD_IP_ADDRESS}",
 	    ad_forest_mode: 'WinThreshold',
 	    ad_domain_mode: 'WinThreshold',
-	    ad_admin_password:  'Secret123',
+	    ad_admin_password:  'vagrant',
             ipa_domain: 'ipa.test',
             ipa_password: 'blablabla',
             # Secret123
             # generated with from passlib.hash import sha512_crypt; import getpass; print sha512_crypt.encrypt(getpass.getpass())
-            root_password: '$6$rounds=656000$AqlQGkj6qZ.zKejT$PsDD3u9twzGK7W8odLcG4oDZB.J7ijLN5GRcudiFz/mLQZa.7Nao5GBZF1rvB/JX0DjX7QK3f3V3XaHxn8qfA"
+            root_password: '$6$rounds=656000$AqlQGkj6qZ.zKejT$PsDD3u9twzGK7W8odLcG4oDZB.J7ijLN5GRcudiFz/mLQZa.7Nao5GBZF1rvB/JX0DjX7QK3f3V3XaHxn8qfA',
             server_shortname: 'server',
             forwarder: '192.168.122.1',
             keycloak_version: '4.5.0.Final',

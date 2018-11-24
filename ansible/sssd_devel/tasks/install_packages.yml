@@ -1,21 +1,7 @@
 - name: Install base development packages
-  dnf: pkg={{item}} state=installed
-  with_items:
-    - autoconf
-    - automake
-    - make
-    - libtool
-    - gettext-devel
-    - ldb-tools
-    - krb5-workstation
-    - openldap-clients
-    - jansson-devel
-    - http-parser-devel
-    - samba-winbind
-    - openssl-devel
-    - p11-kit-devel
-    - ykpers
-    - yubico-piv-tool
-    - pcsc-lite
-    - opensc
-    - gdb
+  become: yes
+  tags:
+    - packages
+  package:
+    name: [ 'autoconf', 'gcc', 'automake', 'make', 'libtool', 'gettext-devel', 'ldb-tools', 'krb5-workstation', 'openldap-clients', 'jansson-devel', 'http-parser-devel', 'samba-winbind', 'openssl-devel', 'p11-kit-devel', 'ykpers', 'yubico-piv-tool', 'pcsc-lite', 'opensc', 'gdb', 'strace', 'ltrace' ]
+    state: latest

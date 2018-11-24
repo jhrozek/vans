@@ -1,2 +1,3 @@
 - name: configure sudoers
+  become: True
   lineinfile: "dest=/etc/sudoers state=present regexp='^jhrozek' line='jhrozek ALL=(ALL) NOPASSWD: ALL'"

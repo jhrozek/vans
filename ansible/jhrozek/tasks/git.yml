@@ -3,14 +3,11 @@
   tags:
     - packages
   package:
-    name: "{{ item }}"
+    name: ['git', 'hub', 'tig']
     state: latest
-  with_items:
-    - git
-    - hub
-    - tig
 
 - name: Template .gitconfig
+  become: yes
   template:
     src: gitconfig.template
     dest: "{{ homedir }}/.gitconfig"

@@ -1,7 +1,15 @@
 - name: install dnf-utils
+  become: yes
   dnf: pkg=dnf-utils state=installed
+  when: ansible_distribution == "Fedora"
+
+- name: install yum-utils
+  become: yes
+  yum: pkg=yum-utils state=installed
+  when: ansible_distribution == "CentOS"
 
 - name: install debuginfo for samba libs
+  become: yes
   command: debuginfo-install -y libldb libtevent
   when: ansible_distribution == "Fedora"
 

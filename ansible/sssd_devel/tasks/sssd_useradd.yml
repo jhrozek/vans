@@ -1,2 +1,3 @@
 - name: add sssd user
+  become: yes
   user: name=sssd comment="sssd system user" system=yes

@@ -23,6 +23,19 @@
       - { role: ad_common, tags: ['ad_common'] }
       - { role: ad_forest, tags: ['ad_forest'] }
 
+- name: install and provision AD child domain
+  hosts: ad_child_dc
+  roles:
+      - { role: ad_common, tags: ['ad_common'] }
+
+- name: install and provision AD client
+  hosts: ad_client
+  roles:
+      - { role: common, tags: ['common'] }
+      - { role: jhrozek, tags: ['jhrozek'] }
+      - { role: adclient, tags: ['adclient'] }
+      - { role: sssd_devel, tags: ['sssd_devel'] }
+
 - name: install and provision Keycloak IDP
   hosts: ipa_trust_keycloak
   become: True

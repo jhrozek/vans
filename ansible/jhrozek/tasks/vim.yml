@@ -3,17 +3,17 @@
   tags:
     - packages
   package:
-    name: "{{ item }}"
+    name: vim-enhanced
     state: latest
-  with_items:
-    - vim-enhanced
 
 - name: Clone Vundle
+  become: yes
   git:
     repo: 'https://github.com/VundleVim/Vundle.vim.git'
     dest: "{{ homedir }}/.vim/bundle/Vundle.vim"
 
 - name: Template .vimrc
+  become: yes
   template:
     src: vimrc.template
     dest: "{{ homedir }}/.vimrc"

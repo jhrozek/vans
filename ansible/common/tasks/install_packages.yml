@@ -1,2 +1,5 @@
-- name: install Fedora packages
-  dnf: pkg=firewalld state=installed
+- name: install firewalld
+  become: True
+  package:
+      name: firewalld
+      state: present

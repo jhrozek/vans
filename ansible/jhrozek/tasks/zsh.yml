@@ -3,17 +3,17 @@
   tags:
     - packages
   package:
-    name: "{{ item }}"
+    name: zsh
     state: latest
-  with_items:
-    - zsh
 
 - name: Create .zshrc from template
+  become: yes
   template:
     src: zshrc.template
     dest: "{{ homedir }}/.zshrc"
 
 - name: Clone oh-my-zsh
+  become: yes
   git:
     repo: https://github.com/robbyrussell/oh-my-zsh.git
     dest: "{{ homedir }}/.oh-my-zsh"

@@ -1,2 +1,3 @@
 - name: Add my user
+  become: True
   user: name=jhrozek comment="Jakub Hrozek" uid=10327 generate_ssh_key=yes shell=/bin/zsh
